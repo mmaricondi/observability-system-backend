@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { MailService } from '@domains/mail/mail';
 import { UserService } from '@domains/user/user';
-import { CustomRepositoryCannotInheritRepositoryError } from 'typeorm';
+import { JwtService } from '@nestjs/jwt';
+import { resourceLimits } from 'worker_threads';
 
 @Injectable()
 export class AuthService {
     constructor(
         private readonly mailService: MailService,
-        private readonly userService: UserService
+        private readonly userService: UserService,
+        private readonly jwtService: JwtService
     ) {}
 
     async login({ email }: { email: string }): Promise<any> {
@@ -23,22 +25,30 @@ export class AuthService {
        return user;
     }
 
-    async validateCode({ email, code }: { email: string; code: string }): Promise<{jwt: string}> {
+    async validateCode({ email, code }: { email: string; code: string }): Promise<any> {
         const user = await this.userService.findByEmail(email);
-        let jwt = '';
+        let access_token = '';
         if (user) {
             if (!this.validateUserCode(user, code)) {
                 console.log('Invalid code');
             }else {
                 console.log('Code validated successfully');
-                jwt = '9989343fd.34343.fdf33434343';
+                access_token = await this.jwtService.signAsync({email, username: user?.username, id: user?.id});
             }
         }else {
             console.log('User not found');
         }
-        return { jwt };
+        return { access_token };
     }
 
+    async validateToken({token}: {token: string}): Promise<any> {
+        try {
+           const isValidToken = await this.jwtService.verifyAsync(token);
+           return { isValidToken, message: 'Token is valid' };
+        } catch (error) {
+            return { isValidToken: null, message: 'Token is invalid or expired' };
+        }
+    }
     generateUsername(email: string): string {
         const username = email.split('@')[0];
         return username;

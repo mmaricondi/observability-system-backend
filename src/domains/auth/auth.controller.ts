@@ -1,5 +1,5 @@
-import { Body, Controller, Post, HttpCode } from '@nestjs/common';
-import { AuthService } from './auth';
+import { Body, Controller, Get, Post, HttpCode } from '@nestjs/common';
+import { AuthService } from '@domains/auth/auth';
 
 @Controller('auth')
 export class AuthController {
@@ -16,5 +16,11 @@ export class AuthController {
     @HttpCode(200)
     code(@Body() body: { email: string; code: string }) {
         return this.auth.validateCode(body);
+    }
+
+    @Post('validate')
+    @HttpCode(200)
+    validate(@Body() body: { token: string }) {
+        return this.auth.validateToken(body);
     }
 }
