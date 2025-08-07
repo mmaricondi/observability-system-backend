@@ -14,7 +14,12 @@ export class MailService {
         return emailRegex.test(email);
     }
     generateCode(): string {
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        return code;
+        const caracteres = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let codigo = '';
+        for (let i = 0; i < 6; i++) {
+            const randomIndex = Math.floor(Math.random() * caracteres.length);
+            codigo += caracteres[randomIndex];
+        }
+        return codigo;
     }
 }

@@ -1,15 +1,16 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from '@src/app.controller';
 import { AppService } from '@src/app.service';
-import { DashboardController } from '@domains/dashboard/dashboard.controller';
 import { AuthModule } from '@domains/auth/auth.module';
-import { MailModule } from '@domains/mail/mail.module';
-import { UserModule } from '@domains/user/user.module';
+import { MailModule } from '@services/mail/mail.module';
+import { DashboardModule } from '@domains/dashboard/dashboard.module';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true
     }),
@@ -26,12 +27,13 @@ import { UserModule } from '@domains/user/user.module';
           autoLoadEntities: true,
           synchronize: config.get<boolean>('DB_SYNCHRONIZE'),
         })
-    }), 
+    }),
+    
     AuthModule, 
     MailModule, 
-    UserModule
+    DashboardModule
   ],
-  controllers: [AppController, DashboardController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {

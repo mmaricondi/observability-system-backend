@@ -20,7 +20,10 @@
     "paths": {
       "@src/*": ["src/*"],
       "@domains/*": ["src/domains/*"],
-      "@entities/*": ["src/entities/*"]
+      "@entities/*": ["src/entities/*"],
+      "@repositories/*": ["src/repositories/*"],
+      "@apis/*": ["src/apis/*"],
+      "@services/*": ["src/services/*"]
     }
   }
 }

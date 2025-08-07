@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MailService } from '@domains/mail/mail';
-import { UserService } from '@domains/user/user';
 import { JwtService } from '@nestjs/jwt';
-import { resourceLimits } from 'worker_threads';
+import { MailService } from '@services/mail/mail';
+import { UserService } from '@repositories/user/user';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +12,7 @@ export class AuthService {
     ) {}
 
     async login({ email }: { email: string }): Promise<any> {
-        const code = this.genereteCode();
+        const code = this.mailService.generateCode()
         const emailResponse = this.mailService.sendEmail(email, 'Login Successful', 'You have successfully logged in. Your code is: ' + code);
         const user = {
             email,
@@ -52,11 +51,6 @@ export class AuthService {
     generateUsername(email: string): string {
         const username = email.split('@')[0];
         return username;
-    }
-
-    genereteCode(): string {
-        const code = Math.floor(100000 + Math.random() * 900000).toString();
-        return code;
     }
 
     validateUserCode(user: any, code: string): boolean {
