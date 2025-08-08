@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from '@domains/auth/auth.controller';
 import { AuthService } from '@domains/auth/auth';
-import { jwtConstants } from '@domains/auth/constraints';
+import { jwtConstants } from '@src/domains/auth/constants';
 import { MailModule } from '@services/mail/mail.module';
 import { UserModule } from '@repositories/user/user.module';
 
@@ -13,7 +13,7 @@ import { UserModule } from '@repositories/user/user.module';
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '60s' }
+      signOptions: { expiresIn: '600s' }
     })],
   controllers: [AuthController],
   providers: [AuthService]

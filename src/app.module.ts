@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from '@src/app.controller';
 import { AppService } from '@src/app.service';
 import { AuthModule } from '@domains/auth/auth.module';
 import { MailModule } from '@services/mail/mail.module';
+import { TasksModule } from '@services/scheduler/tasks.module';
 import { DashboardModule } from '@domains/dashboard/dashboard.module';
+import { SeedModule } from '@scripts/seed.module';
 
 @Module({
   imports: [
@@ -28,12 +29,12 @@ import { DashboardModule } from '@domains/dashboard/dashboard.module';
           synchronize: config.get<boolean>('DB_SYNCHRONIZE'),
         })
     }),
-    
     AuthModule, 
     MailModule, 
-    DashboardModule
+    DashboardModule,
+    TasksModule,
+    SeedModule
   ],
-  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {

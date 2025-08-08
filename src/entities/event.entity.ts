@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Application } from '@entities/application.entity';
 
 @Entity()
 export class Event {
@@ -6,8 +7,17 @@ export class Event {
   id?: number;
 
   @Column()
-  message: string;
+  created_at?: Date;
 
   @Column()
-  status: string
+  description?: string;
+
+  @Column()
+  status?: string
+
+  @ManyToOne(() => Application, (application) => application.events, {
+    onDelete: 'CASCADE'
+  })
+  @JoinColumn({ name: 'application_id' }) 
+  application: Application;
 }

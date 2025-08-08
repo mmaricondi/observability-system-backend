@@ -29,13 +29,9 @@ export class AuthService {
         let access_token = '';
         if (user) {
             if (!this.validateUserCode(user, code)) {
-                console.log('Invalid code');
             }else {
-                console.log('Code validated successfully');
                 access_token = await this.jwtService.signAsync({email, username: user?.username, id: user?.id});
             }
-        }else {
-            console.log('User not found');
         }
         return { access_token };
     }

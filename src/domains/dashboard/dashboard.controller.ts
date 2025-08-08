@@ -7,8 +7,13 @@ import { DashboardService } from '@domains/dashboard/dashboard';
 export class DashboardController {
     constructor(private readonly dashboardService: DashboardService) {}
 
-    @Get('all')
-    all(@Request() req: any) {
-        return this.dashboardService.dashboardData();
+    @Get('last-events')
+    events(@Request() req: any) {
+        return this.dashboardService.onExecuteLastEvent();
+    }
+
+    @Get('avg-events')
+    avgEvents(@Request() req: any) {
+        return this.dashboardService.onExecuteAvgEvents();
     }
 }
