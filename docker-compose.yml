@@ -1,14 +1,22 @@
 version: "3.8"
+
 services:
   api:
     build: .
-    container_name: nest-api
+    container_name: api-back
     ports:
       - "3000:3000"
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgres://clickcannabis:123456@db:5432/services
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: clickcannabis
+      DB_PASSWORD: 123456
+      DB_DATABASE: services
+      DB_SYNCHRONIZE: "true"
+    env_file:
+      - .env
 
   db:
     image: postgres:15
