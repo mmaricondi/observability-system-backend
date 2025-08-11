@@ -14,13 +14,13 @@ enum EVENT_DESCRIPTION_SUCCESS {
 }
 
 enum EVENT_DESCRIPTION_FAILED {
-    ASAAS = "service api gateway assas unstable",
+    ASAAS = "Falha ao acessar api de webhooks do asaas",
     PAGBANK = "service api pagbank unstable",
     CHATGURU = "service api chatguru unstable",
-    OPENAI = "service api openai unstable",
+    OPENAI = "Falha ao acessar api de ",
     S3 = "service api s3 unstable",
-    GUPSHUP = "service api gupshup unstable",
-    TRISTAR = "service api tristar unstable",
+    GUPSHUP = "Falha ao acessar allocated numbers do gupshup",
+    TRISTAR = "Falha na autenticação com a api do tristar",
     GOOGLE = "service api google unstable",
     API_PROD = "service api prod unstable",
     API_DEV = "service api dev unstable",

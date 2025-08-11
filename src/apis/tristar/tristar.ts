@@ -10,9 +10,8 @@ import { EVENT_DESCRIPTION_SUCCESS, EVENT_DESCRIPTION_FAILED, EVENT_STATUS } fro
 import { APPLICATION_NAME } from "@helpers/enums/application.enum";
 
 @Injectable()
-export class AsaasService {
+export class TristarService {
     baseUrl: string;
-    restUrl: string;
     key: string;
 
     constructor(
@@ -21,46 +20,46 @@ export class AsaasService {
         private readonly eventService: EventService,
         private readonly applicationService: ApplicationService
     ) {
-        this.baseUrl = this.configService.get<string>("ASAAS_BASEURL") || ""
-        this.key = `$${this.configService.get<string>("ASAAS_KEY") || ""}`
+        this.baseUrl = this.configService.get<string>("TRISTAR_BASEURL") || ""
+        this.key = this.configService.get<string>("TRISTAR_KEY") || ""
     }
 
     async onExecute() {
         try {
             const response = await firstValueFrom(
-                this.http.get(this.baseUrl, {
+                this.http.post(this.baseUrl, {}, {
                     headers: {
-                        access_token: this.key
+                        Authorization: `Bearer ${this.key}`
                     }
                 })
             )
-            console.log("AsaasService response:", response.data);
+            console.log("Response from Tristar:", response.data);
             const application = await this.fetchApplication();
             let event: Partial<Event> = {
                 application: { id: application?.id } as Application,
                 created_at: new Date()
             };
     
-            if(response?.data?.data) {
+            if(response?.data?.message == "Authenticated") {
                 event = {
                     ...event,
-                    description: EVENT_DESCRIPTION_SUCCESS.ASAAS,
+                    description: EVENT_DESCRIPTION_SUCCESS.TRISTAR,
                     status: EVENT_STATUS.success
                 }
             }else {
                 event = {
                     ...event,
-                    description: EVENT_DESCRIPTION_FAILED.ASAAS,
+                    description: EVENT_DESCRIPTION_FAILED.TRISTAR,
                     status: EVENT_STATUS.failed
                 }
             }
             this.eventService.save(event)
         }catch (error) {
-            console.error("Error fetching AsaasService:", error);
+            console.error("Error fetching Tristar")
         }
     }
 
     async fetchApplication() {
-        return await this.applicationService.findByName(APPLICATION_NAME.ASAAS)
+        return await this.applicationService.findByName(APPLICATION_NAME.TRISTAR)
     }
 }

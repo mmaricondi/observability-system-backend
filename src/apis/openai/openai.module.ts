@@ -1,11 +1,11 @@
 import { Module } from "@nestjs/common";
-import { PagbankService } from "@apis/pagbank/pagbank";
+import { OpenAiService } from "@src/apis/openai/openai";
 import { HttpModule } from "@nestjs/axios";
 import { EventModule } from "@src/repositories/event/event.module";
 import { ApplicationModule } from "@repositories/application/application.module";
 @Module({
     imports: [HttpModule, EventModule, ApplicationModule],
-    providers: [PagbankService],
-    exports: [PagbankService]
+    providers: [OpenAiService],
+    exports: [OpenAiService]
 })
-export class PagbankModule {}
+export class OpenAiModule {}

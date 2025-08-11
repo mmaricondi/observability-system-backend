@@ -10,9 +10,8 @@ import { EVENT_DESCRIPTION_SUCCESS, EVENT_DESCRIPTION_FAILED, EVENT_STATUS } fro
 import { APPLICATION_NAME } from "@helpers/enums/application.enum";
 
 @Injectable()
-export class AsaasService {
+export class OpenAiService {
     baseUrl: string;
-    restUrl: string;
     key: string;
 
     constructor(
@@ -21,8 +20,8 @@ export class AsaasService {
         private readonly eventService: EventService,
         private readonly applicationService: ApplicationService
     ) {
-        this.baseUrl = this.configService.get<string>("ASAAS_BASEURL") || ""
-        this.key = `$${this.configService.get<string>("ASAAS_KEY") || ""}`
+        this.baseUrl = this.configService.get<string>("OPENAI_BASEURL") || ""
+        this.key = this.configService.get<string>("OPENAI_KEY") || ""
     }
 
     async onExecute() {
@@ -30,11 +29,11 @@ export class AsaasService {
             const response = await firstValueFrom(
                 this.http.get(this.baseUrl, {
                     headers: {
-                        access_token: this.key
+                        Authorization: `Bearer ${this.key}`
                     }
                 })
             )
-            console.log("AsaasService response:", response.data);
+    
             const application = await this.fetchApplication();
             let event: Partial<Event> = {
                 application: { id: application?.id } as Application,
@@ -44,23 +43,23 @@ export class AsaasService {
             if(response?.data?.data) {
                 event = {
                     ...event,
-                    description: EVENT_DESCRIPTION_SUCCESS.ASAAS,
+                    description: EVENT_DESCRIPTION_SUCCESS.OPENAI,
                     status: EVENT_STATUS.success
                 }
             }else {
                 event = {
                     ...event,
-                    description: EVENT_DESCRIPTION_FAILED.ASAAS,
+                    description: EVENT_DESCRIPTION_FAILED.OPENAI,
                     status: EVENT_STATUS.failed
                 }
             }
             this.eventService.save(event)
         }catch (error) {
-            console.error("Error fetching AsaasService:", error);
+            console.error("Error fetching OpenAI models:", error)
         }
     }
 
     async fetchApplication() {
-        return await this.applicationService.findByName(APPLICATION_NAME.ASAAS)
+        return await this.applicationService.findByName(APPLICATION_NAME.OPENAI)
     }
 }

@@ -12,7 +12,6 @@ export class DashboardService {
     async onExecuteLastEvent() {
         let applicationListData: { [key: string]: any[] } = { internal: [], external: [] };
         const applicationList: Application[] | [] = await this.applicationService.findAll();
-
         applicationList.forEach((app: Application) => {
             if (!app.type) return; 
             if (!applicationListData[app.type]) {
@@ -22,7 +21,7 @@ export class DashboardService {
                 applicationListData[app.type].push({
                     name: app.name,
                     updated_at: app.updated_at,
-                    events: this.getLastEvent(app.events ?? [])
+                    events: this.getLastEvents(app.events ?? [])
                 });
             }
         });
@@ -41,7 +40,8 @@ export class DashboardService {
                     name: app.name,
                     updated_at: app.updated_at,
                     percentage: this.getAvgStatusEvents(app.events ?? []),
-                    total_events: app.events.length
+                    total_events: app.events.length,
+                    events: app.events
                 });
             }
         });
@@ -50,19 +50,30 @@ export class DashboardService {
         const totalApplicationListData = {
             applications: applicationListData,
             infos:{
-                internal: this.getAvgStatusApps(applicationListData.internal),
-                external: this.getAvgStatusApps(applicationListData.external)
+                internal: applicationListData.internal.length ? this.getAvgStatusApps(applicationListData.internal) : null,
+                external: applicationListData.external.length ? this.getAvgStatusApps(applicationListData.external) : null
             }
         }
 
         return totalApplicationListData;
     }
 
-    getLastEvent(events: Event[]) {
+    getLastEvents(events: Event[]) {
         if(events.length) {
-            return events.sort((a: Event, b: Event) => 
-                new Date(b.created_at ?? 0).getTime() - new Date(a.created_at ?? 0).getTime()
-            )[0];
+            const hastDownEvent = events.some(event => event.status === 'down');
+
+            if(hastDownEvent) {
+                const lastDownEvent = events
+                    .filter(event => event.status === 'down')
+                    .sort((a, b) => {
+                        const aTime = a.created_at ? a.created_at.getTime() : 0;
+                        const bTime = b.created_at ? b.created_at.getTime() : 0;
+                        return bTime - aTime;
+                    })[0];
+                return { status: 'down', created_at: lastDownEvent.created_at, description: lastDownEvent.description };
+            }else {
+                return { status: 'up' };
+            }
         }
     }
 
@@ -86,7 +97,7 @@ export class DashboardService {
         }))
 
         return {
-            totalEvents,
+            totalServices: app.length,
             avgPercent: totalEvents ? ((totalPercent / totalEvents) * 100).toFixed(2) : '0.00'
         }
     }
