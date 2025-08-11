@@ -13,7 +13,8 @@ import { SeedModule } from '@scripts/seed.module';
   imports: [
     ScheduleModule.forRoot(),
     ConfigModule.forRoot({
-      isGlobal: true
+      isGlobal: true,
+      envFilePath: '.env'
     }),
     TypeOrmModule.forRootAsync({
         imports: [ConfigModule],

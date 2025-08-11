@@ -10,10 +10,10 @@ import { EVENT_DESCRIPTION_SUCCESS, EVENT_DESCRIPTION_FAILED, EVENT_STATUS } fro
 import { APPLICATION_NAME } from "@helpers/enums/application.enum";
 
 @Injectable()
-export class ApiGatewayService {
+export class AsaasService {
     baseUrl: string;
     webhookUrl: string;
-    asasKey: string;
+    asaasKey: string;
 
     constructor(
         private http: HttpService,
@@ -21,16 +21,16 @@ export class ApiGatewayService {
         private readonly eventService: EventService,
         private readonly applicationService: ApplicationService
     ) {
-        this.baseUrl = this.configService.get<string>("ASAS_BASEURL") || ""
-        this.webhookUrl = this.configService.get<string>("ASAS_WEBHOOK") || ""
-        this.asasKey = this.configService.get<string>("ASAS_KEY") || ""
+        this.baseUrl = this.configService.get<string>("ASAAS_BASEURL") || ""
+        this.webhookUrl = this.configService.get<string>("ASAAS_WEBHOOK") || ""
+        this.asaasKey = `$${this.configService.get<string>("ASAAS_KEY") || ""}`
     }
 
     async onExecute() {
         const response = await firstValueFrom(
             this.http.get(`${this.baseUrl}${this.webhookUrl}`, {
                 headers: {
-                    access_token: this.asasKey
+                    access_token: this.asaasKey
                 }
             })
         )
@@ -44,13 +44,13 @@ export class ApiGatewayService {
         if(response?.data?.data) {
             event = {
                 ...event,
-                description: EVENT_DESCRIPTION_SUCCESS.GATEWAY,
+                description: EVENT_DESCRIPTION_SUCCESS.ASAAS,
                 status: EVENT_STATUS.success
             }
         }else {
             event = {
                 ...event,
-                description: EVENT_DESCRIPTION_FAILED.GATEWAY,
+                description: EVENT_DESCRIPTION_FAILED.ASAAS,
                 status: EVENT_STATUS.failed
             }
         }

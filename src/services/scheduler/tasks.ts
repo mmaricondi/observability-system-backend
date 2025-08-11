@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { ApiGatewayService } from '@apis/payment-gateway/api-gateway';
+import { AsaasService } from '@apis/asaas/asaas';
 
 @Injectable()
 export class TasksService {
 
   constructor(
-    private readonly apiGatewayService: ApiGatewayService
+    private readonly asaasService: AsaasService
   ){}
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_10_SECONDS)
   handleCron() {
-    // this.apiGatewayService.onExecute()
+    this.asaasService.onExecute()
   }
 }

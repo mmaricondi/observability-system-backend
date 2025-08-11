@@ -1,10 +1,9 @@
 import { Module } from "@nestjs/common";
-import { HttpModule } from "@nestjs/axios";
-import { ApiGatewayModule } from "@apis/payment-gateway/api-gateway.module";
+import { AsaasModule } from "@src/apis/asaas/asaas.module";
 import { TasksService } from "@services/scheduler/tasks";
 
 @Module({
-    imports: [ ApiGatewayModule ], 
+    imports: [ AsaasModule ], 
     providers: [ TasksService ]
 })
 

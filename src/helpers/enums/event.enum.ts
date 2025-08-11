@@ -1,11 +1,31 @@
 enum EVENT_DESCRIPTION_SUCCESS {
-    GATEWAY = "service api gateway assas stable",
-    CHAT_GURU = "service chat guru stable"
+    ASAAS = "service api gateway assas stable",
+    PAGBANK = "service api pagbank stable",
+    CHATGURU = "service api chatguru stable",
+    OPENAI = "service api openai stable",
+    S3 = "service api s3 stable",
+    GUPSHUP = "service api gupshup stable",
+    TRISTAR = "service api tristar stable",
+    GOOGLE = "service api google stable",
+    API_PROD = "service api prod stable",
+    API_DEV = "service api dev stable",
+    SOCKET = "service api socket stable",
+    MICROSSERVICES = "service api microservices stable"
 }
 
 enum EVENT_DESCRIPTION_FAILED {
-    GATEWAY = "service api gateway assas unstable",
-    CHAT_GURU = "service chat guru unstable"
+    ASAAS = "service api gateway assas unstable",
+    PAGBANK = "service api pagbank unstable",
+    CHATGURU = "service api chatguru unstable",
+    OPENAI = "service api openai unstable",
+    S3 = "service api s3 unstable",
+    GUPSHUP = "service api gupshup unstable",
+    TRISTAR = "service api tristar unstable",
+    GOOGLE = "service api google unstable",
+    API_PROD = "service api prod unstable",
+    API_DEV = "service api dev unstable",
+    SOCKET = "service api socket unstable",
+    MICROSSERVICES = "service api microservices unstable"
 }
 
 enum EVENT_STATUS {
