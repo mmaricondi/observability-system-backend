@@ -12,9 +12,10 @@ export class ApplicationService {
   ) {}
 
     async findAll(): Promise<Application[] | []> {
-        return await this.applicationRepository.find({
-          relations: ['events']
-        })
+      const apps = await this.applicationRepository.find({
+        relations: ['events']
+      })
+      return apps.filter(app => app.events && app.events.length > 0);    
     }
     async findByName(name: APPLICATION_NAME): Promise<Application | null> {
       return await this.applicationRepository.findOneBy({ name });

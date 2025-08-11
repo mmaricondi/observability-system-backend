@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post, HttpCode } from '@nestjs/common';
+import { Body, Controller, Get, Post, HttpCode, UseGuards } from '@nestjs/common';
 import { AuthService } from '@domains/auth/auth';
+import { AuthGuard } from '@domains/auth/auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -18,9 +19,9 @@ export class AuthController {
         return this.auth.validateCode(body);
     }
 
-    @Post('validate')
-    @HttpCode(200)
-    validate(@Body() body: { token: string }) {
-        return this.auth.validateToken(body);
+    @Get('validate')
+    @UseGuards(AuthGuard)
+    validate() {
+        return { message: 'You are authenticated', statusCode: 200 };
     }
 }

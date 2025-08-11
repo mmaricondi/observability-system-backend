@@ -11,6 +11,6 @@ export class TasksService {
 
   @Cron(CronExpression.EVERY_10_MINUTES)
   handleCron() {
-    this.apiGatewayService.onExecute()
+    // this.apiGatewayService.onExecute()
   }
 }

@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { ApplicationService } from '@repositories/application/application';
 import { Application } from '@entities/application.entity';
 import { Event } from '@entities/event.entity';
-import { App } from 'supertest/types';
 
 @Injectable()
 export class DashboardService {
@@ -11,7 +10,7 @@ export class DashboardService {
     ) {}
 
     async onExecuteLastEvent() {
-        let applicationListData: { [key: string]: any[] } = {};
+        let applicationListData: { [key: string]: any[] } = { internal: [], external: [] };
         const applicationList: Application[] | [] = await this.applicationService.findAll();
 
         applicationList.forEach((app: Application) => {
@@ -19,32 +18,41 @@ export class DashboardService {
             if (!applicationListData[app.type]) {
                 applicationListData[app.type] = [];
             }
-            applicationListData[app.type].push({
-                name: app.name,
-                updatedAt: app.updated_at,
-                events: this.getLastEvent(app.events ?? [])
-            });
+            if(app.events?.length) {
+                applicationListData[app.type].push({
+                    name: app.name,
+                    updated_at: app.updated_at,
+                    events: this.getLastEvent(app.events ?? [])
+                });
+            }
         });
         
         return applicationListData;
     }
 
     async onExecuteAvgEvents() {
-        let generalInfo: any = {};
-        let applicationListData: any[] = []
+        let applicationListData: { [key: string]: any[] } = { internal: [], external: [] };
         const applicationList: Application[] | [] = await this.applicationService.findAll();
 
         applicationList.forEach((app: Application) => {
-            applicationListData.push({
-                name: app.name,
-                updated_at: app.updated_at,
-                percentage: this.getAvgStatusEvents(app.events ?? [])
-            });
+            if(app.events?.length) {
+                if (!app.type) return; 
+                applicationListData[app.type].push({
+                    name: app.name,
+                    updated_at: app.updated_at,
+                    percentage: this.getAvgStatusEvents(app.events ?? []),
+                    total_events: app.events.length
+                });
+            }
         });
 
+      
         const totalApplicationListData = {
-            ...this.getAvgGeneralInfos(applicationList),
-            applications: applicationListData
+            applications: applicationListData,
+            infos:{
+                internal: this.getAvgStatusApps(applicationListData.internal),
+                external: this.getAvgStatusApps(applicationListData.external)
+            }
         }
 
         return totalApplicationListData;
@@ -68,16 +76,18 @@ export class DashboardService {
         }
     }
 
-    getAvgGeneralInfos(apps: Application[]) {
-        if(apps.length) {
-            const totalEvents = apps.reduce((acc, app) => acc + (app.events?.length ?? 0), 0);
-            const upEvents = apps.reduce((acc, app) => acc + (app.events?.filter(event => event.status === 'up').length ?? 0), 0);
-            const avgUp = (upEvents / totalEvents) * 100;
+    getAvgStatusApps(app: any[]) {
+        let totalEvents = 0;
+        let totalPercent = 0;
 
-            return {
-                servicos: apps.length,
-                percentage: avgUp.toFixed(2)
-            }
+        app.forEach((app => {
+            totalEvents += app.total_events;
+            totalPercent += (app.percentage / 100) * app.total_events;
+        }))
+
+        return {
+            totalEvents,
+            avgPercent: totalEvents ? ((totalPercent / totalEvents) * 100).toFixed(2) : '0.00'
         }
     }
 

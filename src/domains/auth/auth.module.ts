@@ -13,7 +13,7 @@ import { UserModule } from '@repositories/user/user.module';
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '600s' }
+      signOptions: { expiresIn: '1h' }
     })],
   controllers: [AuthController],
   providers: [AuthService]
