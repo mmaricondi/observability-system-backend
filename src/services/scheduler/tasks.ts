@@ -6,6 +6,8 @@ import { GupshupService } from "@apis/gupshup/gupshup";
 import { TristarService } from "@apis/tristar/tristar";
 import { S3Service } from '@apis/s3/s3';
 import { SocketService } from '@apis/socket/socket';
+import { CrmProdService } from '@src/apis/crm-prod/crm-prod';
+import { CrmDevService } from '@src/apis/crm-dev/crm-dev';
 
 @Injectable()
 export class TasksService {
@@ -16,7 +18,9 @@ export class TasksService {
     private readonly gupshupService: GupshupService,
     private readonly tristarService: TristarService,
     private readonly s3Service: S3Service,
-    private readonly socketService: SocketService
+    private readonly socketService: SocketService,
+    private readonly crmProdService: CrmProdService,
+    private readonly crmDevService: CrmDevService
   ){}
 
   @Cron(CronExpression.EVERY_10_SECONDS)
@@ -28,5 +32,7 @@ export class TasksService {
     // this.gupshupService.onExecute();
     // this.s3Service.onExecute();
     // this.socketService.onExecute();
+    // this.crmProdService.onExecute();
+    this.crmDevService.onExecute();
   }
 }

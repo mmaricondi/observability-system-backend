@@ -10,10 +10,8 @@ import { EVENT_DESCRIPTION_SUCCESS, EVENT_DESCRIPTION_FAILED, EVENT_STATUS } fro
 import { APPLICATION_NAME } from "@helpers/enums/application.enum";
 
 @Injectable()
-export class AsaasService {
+export class CrmProdService {
     baseUrl: string;
-    restUrl: string;
-    key: string;
 
     constructor(
         private http: HttpService,
@@ -21,45 +19,40 @@ export class AsaasService {
         private readonly eventService: EventService,
         private readonly applicationService: ApplicationService
     ) {
-        this.baseUrl = this.configService.get<string>("ASAAS_BASEURL") || ""
-        this.key = `$${this.configService.get<string>("ASAAS_KEY") || ""}`
+        this.baseUrl = this.configService.get<string>("CRM_PROD_BASEURL") || ""
     }
 
     async onExecute() {
         try {
             const response = await firstValueFrom(
-                this.http.get(this.baseUrl, {
-                    headers: {
-                        access_token: this.key
-                    }
-                })
+                this.http.get(this.baseUrl)
             )
             const application = await this.fetchApplication();
             let event: Partial<Event> = {
                 application: { id: application?.id } as Application,
                 created_at: new Date()
             };
-    
-            if(response?.data?.data) {
+  
+            if(response?.status == 200) {
                 event = {
                     ...event,
-                    description: EVENT_DESCRIPTION_SUCCESS.ASAAS,
+                    description: EVENT_DESCRIPTION_SUCCESS.API_PROD,
                     status: EVENT_STATUS.success
                 }
             }else {
                 event = {
                     ...event,
-                    description: EVENT_DESCRIPTION_FAILED.ASAAS,
+                    description: EVENT_DESCRIPTION_FAILED.API_PROD,
                     status: EVENT_STATUS.failed
                 }
             }
             this.eventService.save(event)
         }catch (error) {
-            console.error("Error fetching AsaasService:", error);
+            console.error("Error fetching CrmProdService:", error);
         }
     }
 
     async fetchApplication() {
-        return await this.applicationService.findByName(APPLICATION_NAME.ASAAS)
+        return await this.applicationService.findByName(APPLICATION_NAME.API_PROD)
     }
 }

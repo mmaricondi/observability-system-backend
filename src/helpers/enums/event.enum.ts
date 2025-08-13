@@ -7,8 +7,8 @@ enum EVENT_DESCRIPTION_SUCCESS {
     GUPSHUP = "service api gupshup stable",
     TRISTAR = "service api tristar stable",
     GOOGLE = "service api google stable",
-    API_PROD = "service api prod stable",
-    API_DEV = "service api dev stable",
+    API_PROD = "service crm prod stable",
+    API_DEV = "service crm dev stable",
     SOCKET = "service api socket stable",
     MICROSSERVICES = "service api microservices stable"
 }
@@ -22,8 +22,8 @@ enum EVENT_DESCRIPTION_FAILED {
     GUPSHUP = "Falha ao acessar allocated numbers do gupshup",
     TRISTAR = "Falha na autenticação com a api do tristar",
     GOOGLE = "service api google unstable",
-    API_PROD = "service api prod unstable",
-    API_DEV = "service api dev unstable",
+    API_PROD = "service crm prod down",
+    API_DEV = "service crm dev down",
     SOCKET = "service api socket unstable",
     MICROSSERVICES = "service api microservices unstable"
 }

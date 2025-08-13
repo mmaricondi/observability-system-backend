@@ -1,13 +1,13 @@
 import { HttpService } from "@nestjs/axios";
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import { firstValueFrom } from 'rxjs';
 import { EventService } from "@repositories/event/event";
 import { ApplicationService } from "@repositories/application/application";
 import { Event } from "@entities/event.entity";
 import { Application } from "@entities/application.entity";
 import { EVENT_DESCRIPTION_SUCCESS, EVENT_DESCRIPTION_FAILED, EVENT_STATUS } from '@helpers/enums/event.enum';
 import { APPLICATION_NAME } from "@helpers/enums/application.enum";
+import { io, Socket } from 'socket.io-client';
 
 @Injectable()
 export class SocketService {
