@@ -4,7 +4,6 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from '@src/app.service';
 import { AuthModule } from '@domains/auth/auth.module';
-import { MailModule } from '@services/mail/mail.module';
 import { TasksModule } from '@services/scheduler/tasks.module';
 import { DashboardModule } from '@domains/dashboard/dashboard.module';
 import { SeedModule } from '@scripts/seed.module';
@@ -31,7 +30,6 @@ import { SeedModule } from '@scripts/seed.module';
         })
     }),
     AuthModule, 
-    MailModule, 
     DashboardModule,
     TasksModule,
     SeedModule

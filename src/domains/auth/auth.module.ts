@@ -3,12 +3,12 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from '@domains/auth/auth.controller';
 import { AuthService } from '@domains/auth/auth';
 import { jwtConstants } from '@src/domains/auth/constants';
-import { MailModule } from '@services/mail/mail.module';
+import { MailModule } from '@src/services/mail/mail.module';
 import { UserModule } from '@repositories/user/user.module';
 
 @Module({
   imports: [
-    MailModule, 
+    MailModule,
     UserModule,
     JwtModule.register({
       global: true,

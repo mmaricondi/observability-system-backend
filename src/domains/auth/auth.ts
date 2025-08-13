@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { MailService } from '@services/mail/mail';
+import { MailService } from '@src/services/mail/mail';
 import { UserService } from '@repositories/user/user';
 
 @Injectable()
@@ -11,9 +11,19 @@ export class AuthService {
         private readonly jwtService: JwtService
     ) {}
 
+    sendMail(to: string, code: string) {
+        return this.mailService.sendEmail({to, dynamicData: { code }});
+    }
+
+    generateCode(): string {
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        console.log("Generated code:", code);
+        return code;
+    }
+
     async login({ email }: { email: string }): Promise<any> {
-        const code = this.mailService.generateCode()
-        const emailResponse = this.mailService.sendEmail(email, 'Login Successful', 'You have successfully logged in. Your code is: ' + code);
+        const code = this.generateCode()
+        this.sendMail(email, code);
         const user = {
             email,
             username: this.generateUsername(email),

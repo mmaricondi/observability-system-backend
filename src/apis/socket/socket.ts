@@ -10,7 +10,7 @@ import { EVENT_DESCRIPTION_SUCCESS, EVENT_DESCRIPTION_FAILED, EVENT_STATUS } fro
 import { APPLICATION_NAME } from "@helpers/enums/application.enum";
 
 @Injectable()
-export class TristarService {
+export class SocketService {
     baseUrl: string;
     key: string;
 
@@ -26,39 +26,34 @@ export class TristarService {
 
     async onExecute() {
         try {
-            const response = await firstValueFrom(
-                this.http.get(this.baseUrl, {
-                    headers: {
-                        Authorization: `Bearer ${this.key}`
-                    }
-                })
-            )
+            const response = {}// socket implementation
+
             const application = await this.fetchApplication();
+
             let event: Partial<Event> = {
                 application: { id: application?.id } as Application,
                 created_at: new Date()
             };
-    
-            if(response?.status === 200) {
+            if(response) {
                 event = {
                     ...event,
-                    description: EVENT_DESCRIPTION_SUCCESS.TRISTAR,
+                    description: EVENT_DESCRIPTION_SUCCESS.SOCKET,
                     status: EVENT_STATUS.success
                 }
             }else {
                 event = {
                     ...event,
-                    description: EVENT_DESCRIPTION_FAILED.TRISTAR,
+                    description: EVENT_DESCRIPTION_FAILED.SOCKET,
                     status: EVENT_STATUS.failed
                 }
             }
             this.eventService.save(event)
         }catch (error) {
-            console.error("Error fetching Tristar")
+            console.error("Error fetching Socket.io")
         }
     }
 
     async fetchApplication() {
-        return await this.applicationService.findByName(APPLICATION_NAME.TRISTAR)
+        return await this.applicationService.findByName(APPLICATION_NAME.SOCKET)
     }
 }

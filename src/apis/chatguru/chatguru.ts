@@ -10,8 +10,9 @@ import { EVENT_DESCRIPTION_SUCCESS, EVENT_DESCRIPTION_FAILED, EVENT_STATUS } fro
 import { APPLICATION_NAME } from "@helpers/enums/application.enum";
 
 @Injectable()
-export class TristarService {
+export class ChatGuruService {
     baseUrl: string;
+    accountId: string;
     key: string;
 
     constructor(
@@ -20,8 +21,9 @@ export class TristarService {
         private readonly eventService: EventService,
         private readonly applicationService: ApplicationService
     ) {
-        this.baseUrl = this.configService.get<string>("TRISTAR_BASEURL") || ""
-        this.key = this.configService.get<string>("TRISTAR_KEY") || ""
+        this.baseUrl = this.configService.get<string>("CHATGURU_BASEURL") || ""
+        this.accountId = this.configService.get<string>("CHATGURU_ACCOUNT_ID") || ""
+        this.key = `$${this.configService.get<string>("CHATGURU_KEY") || ""}`
     }
 
     async onExecute() {
@@ -29,36 +31,37 @@ export class TristarService {
             const response = await firstValueFrom(
                 this.http.get(this.baseUrl, {
                     headers: {
-                        Authorization: `Bearer ${this.key}`
+                        access_token: this.key
                     }
                 })
             )
+            console.log("AsaasService response:", response.data);
             const application = await this.fetchApplication();
             let event: Partial<Event> = {
                 application: { id: application?.id } as Application,
                 created_at: new Date()
             };
     
-            if(response?.status === 200) {
+            if(response?.data?.data) {
                 event = {
                     ...event,
-                    description: EVENT_DESCRIPTION_SUCCESS.TRISTAR,
+                    description: EVENT_DESCRIPTION_SUCCESS.CHATGURU,
                     status: EVENT_STATUS.success
                 }
             }else {
                 event = {
                     ...event,
-                    description: EVENT_DESCRIPTION_FAILED.TRISTAR,
+                    description: EVENT_DESCRIPTION_FAILED.CHATGURU,
                     status: EVENT_STATUS.failed
                 }
             }
             this.eventService.save(event)
         }catch (error) {
-            console.error("Error fetching Tristar")
+            console.error("Error fetching AsaasService:", error);
         }
     }
 
     async fetchApplication() {
-        return await this.applicationService.findByName(APPLICATION_NAME.TRISTAR)
+        return await this.applicationService.findByName(APPLICATION_NAME.CHATGURU)
     }
 }

@@ -4,7 +4,6 @@ import { ConfigService } from "@nestjs/config";
 import { firstValueFrom } from 'rxjs';
 import { EventService } from "@repositories/event/event";
 import { ApplicationService } from "@repositories/application/application";
-import * as qs from 'qs';
 import { Event } from "@entities/event.entity";
 import { Application } from "@entities/application.entity";
 import { EVENT_DESCRIPTION_SUCCESS, EVENT_DESCRIPTION_FAILED, EVENT_STATUS } from '@helpers/enums/event.enum';
@@ -13,13 +12,9 @@ import { APPLICATION_NAME } from "@helpers/enums/application.enum";
 @Injectable()
 export class GupshupService {
     baseUrl: string;
+    restUrl: string;
     key: string;
-    sourcePhone: string;
-    destinationPhone: string;
-    appName: string;
-    templateId: string;
-    templateParams: string[];
-    channel: string;
+    appId: string;
 
     constructor(
         private http: HttpService,
@@ -28,30 +23,15 @@ export class GupshupService {
         private readonly applicationService: ApplicationService
     ) {
         this.baseUrl = this.configService.get<string>("GUPSHUP_BASEURL") || ""
+        this.restUrl = this.configService.get<string>("GUPSHUP_RESTURL") || ""
         this.key = this.configService.get<string>("GUPSHUP_KEY") || ""
-        this.sourcePhone = "5521993686082"
-        this.destinationPhone = "5521993686082"
-        this.appName = "clickguru";
-        this.templateId = "1";
-        this.templateParams = ["1"];
-        this.channel = 'whatsapp';
+        this.appId = this.configService.get<string>("GUPSHUP_APP_ID") || ""
     }
 
     async onExecute() {
         try {
-            const data = {
-                channel: this.channel,
-                source: this.sourcePhone,
-                destination: this.destinationPhone,
-                'src.name': this.appName,
-                template: JSON.stringify({
-                    id: this.templateId,
-                    params: this.templateParams,
-                })
-            };
-            const dataEncoded = qs.stringify(data, { allowDots: true });
             const response = await firstValueFrom(
-                this.http.post(`${this.baseUrl}`, dataEncoded, {
+                this.http.get(`${this.baseUrl}${this.appId}${this.restUrl}`, {
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         apikey: this.key
@@ -64,7 +44,7 @@ export class GupshupService {
                 created_at: new Date()
             };
     
-            if(response?.data?.data) {
+            if(response?.data?.status == 'success') {
                 event = {
                     ...event,
                     description: EVENT_DESCRIPTION_SUCCESS.GUPSHUP,
